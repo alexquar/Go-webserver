@@ -1,0 +1,178 @@
+Basics
+
+Main and init 
+Import “fmt”
+Main executes from 
+func main(){}
+Init used to create global vars can’t be created normally basically program setup
+func init() {  fmt.Println("Welcome to init() function")}
+
+Compiler
+Compile program
+go run name.go 
+
+Variables
+Types can be inferred but also explicitly typed if you want 
+Can create and explicitly type and not give value
+Strings default to empty 
+	var integer int = 5
+Also ints of dif sizes, ie int8, int32 and so on
+Unsigned ints with uintn
+	var floatNum float64 = 5.5
+also float32
+	var boolean bool = true	
+	var str string = "Hello, Go!"
+	var char rune = 'A'
+	var byteNum byte = 'B'
+	var complexNum complex128 = 1 + 2i
+Can also use walrus declaration only in funcs (creates local vars)
+Thing := 1
+Use const instead of var as usual to stop changes
+Global vars can be declared outside of a functions 
+Local vars take precedence 
+IO
+Print
+fmt.Println(----)
+fmt.Print(---)
+Comma separated values
+Also prints c type 
+		fmt.Printf("index: %d, char: %c\n", i, chr)
+Simply specificity sentence and data types then vars 
+
+Standard operators 
+All standard math operators 
+Type casting 
+new := newType(variable)
+
+Packages
+All files for a project go in same package
+package something
+
+Control flow
+if ---- { } else if { } else {}
+For loops are exactly the same as c++ loops semi colon separated walrus type for loop var 
+Also use as a while loop
+for condition { }
+For loop as iterator 
+for index, thing:= range things { }
+Can also spec labels and then use goto name to jump 
+Switch statements 
+switch thing{
+case option:
+Do thing
+Case option2:
+Do thing
+Default
+Do thing 
+}
+
+Functions
+func functionName(parameters ...Type) ReturnType {    // Code}
+Pass by reference 
+To pass by reference ie modify the passed variable precede the data type with a *
+Can return a list
+func name()(int,int,string){//code}
+Can then decompose the list
+var int1, int2, word = name()
+Can also name the return values so you dont have to explicitly return them (like matlab)
+func name()(int one, int two){ 
+One = 1
+Two = 2
+Return 
+}
+If a value is returned from a func and unused use an _ to name it so an error is not thrown when you dont use it 
+Methods (functions on structs)
+So that you can go type.thing()
+func(reciver_name_1 Type) method_name(parameter_list)(return_type){// Cod}
+Receiver is the thing you called it on
+Can overload and define on multiple types 
+Iterables 
+Can wrap into an iterable when passed to a function 
+nums …int, takes in a bunch of int args and wraps to a list 
+
+
+Arrays
+Basics 
+Explicit 
+Var array_name[length]Type
+Implicit
+array_name:= [length]Type{item1, item2, item3,...itemN}
+Supports multidimensional 
+arr := [3][3]string{{"C #", "C", "Python"}, {"Java", "Scala", "Perl"},
+     {"C++", "Go", "HTML"}}
+Can find length with len()
+If you pass … as length it will size based on elements passed
+Passed by value not reference 
+Directly compare with == like struct 
+
+Slices (dynamic)
+   s1 := []int{23, 56, 89, 34} note no size needed
+Take arr and slice it arr[start:end]
+Equality 
+https://www.geeksforgeeks.org/how-to-compare-two-slices-of-bytes-in-golang/ 
+Sorting
+Import sort 
+   sort.Ints(intSlice), or others sorts ascending
+
+Structs
+
+Creation 
+Create the type 
+type Address struct {
+    Name    string
+    city    string
+    Pincode int
+}
+Pass in args with the correct name 
+  a2 := Address{Name: "Anikaa", city: "Ballia",
+                                 Pincode: 277001}
+Use . operator to access member variable 
+Can nest structs creation would then look like this 
+test := Person{ Name: “Alex”,
+Address: Address{Name: "Anikaa", city: "Ballia",
+                                 Pincode: 277001},
+			}
+Can access inner struct fields as normal without having to say test.address.city the field gets promoted so just need test.city
+Can define functions as fields 
+type Person struct {
+    Name  string
+    Greet func() string
+}
+  person := Person{
+        Name: "A",
+    }
+person.Greet = func() string {
+        return "Hello, " + person.Name
+    }
+
+
+
+
+
+Operators 
+You can use the standard equality checker on structs
+== will check if all fields are equal and must be of same data type 
+
+
+
+
+Pointers
+Like c * gets value at address and & gets address of variable 
+Default value is nil 
+Declare with := or var *int name = &value
+Functions take pointers as args like normal 
+
+Strings
+Basics
+Strings are read only cannot be modified 
+Easy to iterate as an array of chars using a for loop 
+Can compare w ==
+Bunch of random funcs 
+
+Interfaces 
+Makes it easy to define functions without having to write the code 
+https://www.geeksforgeeks.org/interfaces-in-golang/ 
+Errors
+
+
+Concerency 
