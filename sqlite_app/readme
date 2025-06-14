@@ -1,3 +1,0 @@
-Basic webapp with go http, html and sqlite 
-in this dir go run ./cmd/web/
-go install github.com/pressly/goose/v3/cmd/goose@latest
