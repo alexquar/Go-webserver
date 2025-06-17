@@ -31,12 +31,14 @@
                         <h5 class="card-title">{{ .Title }}</h5>
                         <p class="card-text">Director: {{ .Director }}</p>
                         </div>
-                        <button class="btn btn-outline-primary" hx-get="/update/{{ .ID }}" hx-trigger="click" hx-swap="outerHTML">
+                        <div>
+                        <button class="btn btn-outline-primary" hx-get="/update/{{ .ID }}" hx-trigger="click" hx-swap="outerHTML" hx-target="closest .film-card">
                         Update
                     </button>
                         <button class="btn btn-danger" hx-delete="/delete/{{ .ID }}" hx-target="#film-list" hx-trigger="click" hx-swap="outerHTML">
                         Delete
                     </button>
+                    </div>
                     </div>
 
                 </div>

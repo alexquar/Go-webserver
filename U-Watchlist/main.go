@@ -30,6 +30,8 @@ func main() {
 	http.HandleFunc("/", home)
 	http.HandleFunc("POST /new", new)
 	http.HandleFunc("DELETE /delete/{ID}", delete)
+	http.HandleFunc("GET /update/{ID}", updateTemplate)
+	http.HandleFunc("PUT /update/{ID}", update)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
@@ -64,6 +66,43 @@ func delete(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+	} else {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func updateTemplate(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(1 * time.Second)
+	if r.Method == http.MethodGet {
+		id, _ := strconv.Atoi(r.PathValue("ID"))
+		for _, film := range films["Films"] {
+			if film.ID == id {
+				tmpl := template.Must(template.ParseFiles("update.html"))
+				tmpl.ExecuteTemplate(w, "updateCard", film)
+				return
+			}
+		}
+		http.NotFound(w, r)
+	} else {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func update(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(1 * time.Second)
+	if r.Method == http.MethodPut {
+		id, _ := strconv.Atoi(r.PathValue("ID"))
+		title := r.FormValue("title")
+		director := r.FormValue("director")
+		for i, film := range films["Films"] {
+			if film.ID == id {
+				films["Films"][i] = Film{Title: title, Director: director, ID: id}
+				tmpl := template.Must(template.ParseFiles("index.html"))
+				tmpl.ExecuteTemplate(w, "filmCard", films["Films"][i])
+				return
+			}
+		}
+		http.NotFound(w, r)
 	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
