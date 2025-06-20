@@ -1,0 +1,98 @@
+    /* Softer dark theme */
+    body {
+        background-color: #1e1e2f; /* Slightly lighter, navy-ish dark */
+        color: #d0d0d0;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Navbar improvements */
+    .navbar {
+        background: rgba(30, 30, 47, 0.95);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        backdrop-filter: saturate(180%) blur(10px);
+        border-bottom: 1px solid #444;
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.85rem;
+        color: #3dd598;
+        letter-spacing: 1px;
+        user-select: none;
+        transition: color 0.3s ease;
+    }
+    .navbar-brand:hover {
+        color: #2bb27b;
+    }
+
+    .nav-link {
+        color: #a0a0a0 !important;
+        font-weight: 500;
+        margin-left: 1rem;
+        transition: color 0.3s ease;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+    .nav-link:hover,
+    .nav-link.active {
+        color: #3dd598 !important;
+        text-decoration: underline;
+    }
+
+    .film-card {
+        background-color: #2a2a40;
+        border: 1px solid #3d3d5a;
+        border-radius: 14px;
+    }
+
+    .form-control,
+    .form-label {
+        color: #d0d0d0;
+    }
+
+    .form-control.bg-dark {
+        background-color: #3a3a57 !important;
+        border-color: #565678 !important;
+    }
+
+    .btn-outline-primary {
+        border-color: #3dd598;
+        color: #3dd598;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #3dd598;
+        color: #1e1e2f;
+    }
+
+    .btn-primary {
+        background-color: #3dd598;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #2bb27b;
+    }
+
+    .btn-danger {
+        background-color: #e74c3c;
+        border: none;
+    }
+
+    .btn-danger:hover {
+        background-color: #c0392b;
+    }
+
+    .card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #f0f0f0;
+    }
+
+    .card-text {
+        font-size: 1rem;
+        color: #bbb;
+    }

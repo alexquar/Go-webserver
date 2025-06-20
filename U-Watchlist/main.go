@@ -9,16 +9,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/alexquar/U-Watchlist/models"
 	_ "modernc.org/sqlite"
 )
 
 var db *sql.DB
-
-type Film struct {
-	Title    string
-	Director string
-	ID       int64
-}
 
 func main() {
 	fmt.Println("Starting server on :8080")
@@ -32,24 +27,25 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	http.HandleFunc("/", home)
-	http.HandleFunc("POST /new", new)
-	http.HandleFunc("DELETE /delete/{ID}", delete)
-	http.HandleFunc("GET /update/{ID}", updateTemplate)
-	http.HandleFunc("PUT /update/{ID}", update)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /new", new)
+	mux.HandleFunc("DELETE /delete/{ID}", delete)
+	mux.HandleFunc("GET /update/{ID}", updateTemplate)
+	mux.HandleFunc("PUT /update/{ID}", update)
+	mux.HandleFunc("/", home)
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("index.html"))
+	tmpl := template.Must(template.ParseFiles("./templates/index.html"))
 	rows, err := db.Query(("SELECT * FROM films"))
 	if err != nil {
 		http.Error(w, "Failed to retrieve films", http.StatusInternalServerError)
 	}
 	defer rows.Close()
-	films := make(map[string][]Film)
+	films := make(map[string][]models.Film)
 	for rows.Next() {
-		var film Film
+		var film models.Film
 		err := rows.Scan(&film.ID, &film.Title, &film.Director)
 		if err != nil {
 			http.Error(w, "Failed to scan film", http.StatusInternalServerError)
@@ -80,11 +76,12 @@ func new(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, "Failed to retrieve last insert ID", http.StatusInternalServerError)
 		}
-		tmpl := template.Must(template.ParseFiles("index.html"))
-		tmpl.ExecuteTemplate(w, "filmCard", Film{
+		tmpl := template.Must(template.ParseFiles("./templates/index.html"))
+		tmpl.ExecuteTemplate(w, "filmCard", models.Film{
 			Title:    title,
 			Director: director,
 			ID:       id})
+
 	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
@@ -106,16 +103,27 @@ func delete(w http.ResponseWriter, r *http.Request) {
 
 func updateTemplate(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(1 * time.Second)
+
 	if r.Method == http.MethodGet {
-		id, _ := strconv.Atoi(r.PathValue("ID"))
-		row, _ := db.Query("SELECT * FROM films WHERE ID = ?", id)
-		var film Film
-		err := row.Scan(&film.ID, &film.Title, &film.Director)
+		id, err := strconv.Atoi(r.PathValue("ID"))
+		if err != nil {
+			http.Error(w, "Invalid ID", http.StatusBadRequest)
+			return
+		}
+
+		var film models.Film
+		err = db.QueryRow("SELECT ID, Title, Director FROM films WHERE ID = ?", id).Scan(&film.ID, &film.Title, &film.Director)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
+			return
 		}
-		tmpl := template.Must(template.ParseFiles("update.html"))
-		tmpl.ExecuteTemplate(w, "updateCard", film)
+
+		tmpl := template.Must(template.ParseFiles("./templates/update.html"))
+		err = tmpl.ExecuteTemplate(w, "updateCard", film)
+		if err != nil {
+			http.Error(w, "Template execution failed", http.StatusInternalServerError)
+			fmt.Println("Template error:", err)
+		}
 	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
@@ -134,8 +142,8 @@ func update(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, "Failed to update film", http.StatusInternalServerError)
 		}
-		tmpl := template.Must(template.ParseFiles("index.html"))
-		tmpl.ExecuteTemplate(w, "filmCard", Film{
+		tmpl := template.Must(template.ParseFiles("./templates/index.html"))
+		tmpl.ExecuteTemplate(w, "filmCard", models.Film{
 			Title:    title,
 			Director: director,
 			ID:       int64(id),

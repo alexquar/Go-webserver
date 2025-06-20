@@ -1,0 +1,19 @@
+{{ define "updateCard" }}
+<div class="card mb-3 film-card p-3">
+    <form hx-put="/update/{{ .ID }}" hx-target="closest .film-card" hx-swap="outerHTML">
+        <div class="mb-3">
+            <label for="title-{{ .ID }}" class="form-label">Title</label>
+            <input type="text" class="form-control bg-dark border-secondary text-light" id="title-{{ .ID }}" name="title" value="{{ .Title }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="director-{{ .ID }}" class="form-label">Director</label>
+            <input type="text" class="form-control bg-dark border-secondary text-light" id="director-{{ .ID }}" name="director" value="{{ .Director }}" required>
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">
+                Save
+            </button>
+        </div>
+    </form>
+</div>
+{{ end }}
