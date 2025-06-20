@@ -35,7 +35,7 @@
                         <button class="btn btn-outline-primary" hx-get="/update/{{ .ID }}" hx-trigger="click" hx-swap="outerHTML" hx-target="closest .film-card">
                         Update
                     </button>
-                        <button class="btn btn-danger" hx-delete="/delete/{{ .ID }}" hx-target="#film-list" hx-trigger="click" hx-swap="outerHTML">
+                        <button class="btn btn-danger" hx-delete="/delete/{{ .ID }}" hx-target="closest .film-card" hx-trigger="click" hx-swap="outerHTML">
                         Delete
                     </button>
                     </div>
