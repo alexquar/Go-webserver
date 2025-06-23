@@ -3,14 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/alexquar/U-Watchlist/models"
 	"html/template"
 	"log"
+	_ "modernc.org/sqlite"
 	"net/http"
 	"strconv"
-	"time"
-
-	"github.com/alexquar/U-Watchlist/models"
-	_ "modernc.org/sqlite"
 )
 
 var db *sql.DB
@@ -37,6 +35,7 @@ func main() {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
+
 	tmpl := template.Must(template.ParseFiles("./templates/index.html"))
 	rows, err := db.Query(("SELECT * FROM films"))
 	if err != nil {
@@ -59,7 +58,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func new(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(1 * time.Second)
 	if r.Method == http.MethodPost {
 		title := r.FormValue("title")
 		director := r.FormValue("director")
@@ -88,7 +86,6 @@ func new(w http.ResponseWriter, r *http.Request) {
 }
 
 func delete(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(1 * time.Second)
 	if r.Method == http.MethodDelete {
 		id, _ := strconv.Atoi(r.PathValue("ID"))
 		_, err := db.Exec("DELETE FROM films WHERE ID = ?", id)
@@ -102,8 +99,6 @@ func delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTemplate(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(1 * time.Second)
-
 	if r.Method == http.MethodGet {
 		id, err := strconv.Atoi(r.PathValue("ID"))
 		if err != nil {
@@ -130,7 +125,6 @@ func updateTemplate(w http.ResponseWriter, r *http.Request) {
 }
 
 func update(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(1 * time.Second)
 	if r.Method == http.MethodPut {
 		id, _ := strconv.Atoi(r.PathValue("ID"))
 		title := r.FormValue("title")
