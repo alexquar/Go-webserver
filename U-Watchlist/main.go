@@ -3,33 +3,31 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/alexquar/U-Watchlist/handlers"
 	"github.com/alexquar/U-Watchlist/models"
-	"html/template"
 	"log"
 	_ "modernc.org/sqlite"
 	"net/http"
-	"strconv"
 )
-
-var db *sql.DB
 
 func main() {
 	fmt.Println("Starting server on :8080")
 	var err error
-	db, err = sql.Open("sqlite", "app.db")
+	models.DB, err = sql.Open("sqlite", "app.db")
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS films (ID INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, Director TEXT)")
+	defer models.DB.Close()
+	_, err = models.DB.Exec("CREATE TABLE IF NOT EXISTS films (ID INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, Director TEXT, Year INTEGER, User TEXT)")
 	if err != nil {
 		log.Fatal(err)
 	}
 	mux := http.NewServeMux()
-	mux.HandleFunc("POST /new", new)
-	mux.HandleFunc("DELETE /delete/{ID}", delete)
-	mux.HandleFunc("GET /update/{ID}", updateTemplate)
-	mux.HandleFunc("PUT /update/{ID}", update)
-	mux.HandleFunc("/", home)
+	mux.HandleFunc("POST /new", handlers.New)
+	mux.HandleFunc("DELETE /delete/{ID}", handlers.Delete)
+	mux.HandleFunc("GET /update/{ID}", handlers.UpdateTemplate)
+	mux.HandleFunc("PUT /update/{ID}", handlers.Update)
+	mux.HandleFunc("/", handlers.Home)
 	log.Fatal(http.ListenAndServe(":8080", mux))
+
 }

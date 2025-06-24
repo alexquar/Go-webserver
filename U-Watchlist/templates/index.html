@@ -135,7 +135,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h5 class="card-title">{{ .Title }}</h5>
-                                <p class="card-text">Director: {{ .Director }}</p>
+                                <p class="card-text">Director: {{ if .Director }}{{ .Director }}{{ else }}N/A{{ end }}, Release: {{ if .Year }}{{ .Year }}{{ else }}N/A{{ end }}</p>
                             </div>
                             <div>
                                 <button class="btn btn-outline-primary me-2" 
@@ -170,6 +170,10 @@
             <div class="col-md-6">
                 <label for="director" class="form-label">Director</label>
                 <input type="text" class="form-control bg-dark border-secondary" id="director" name="director" required>
+            </div>
+            <div class="col-md-6">
+                <label for="year" class="form-label">Year</label>
+                <input type="number" class="form-control bg-dark border-secondary" id="year" name="year" required>
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3">

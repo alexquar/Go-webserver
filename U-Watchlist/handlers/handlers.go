@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
+
+	"github.com/alexquar/U-Watchlist/models"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
-
+func Home(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("./templates/index.html"))
-	rows, err := db.Query(("SELECT * FROM films"))
+	rows, err := models.DB.Query(("SELECT * FROM films"))
 	if err != nil {
 		http.Error(w, "Failed to retrieve films", http.StatusInternalServerError)
 	}
@@ -17,7 +19,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	films := make(map[string][]models.Film)
 	for rows.Next() {
 		var film models.Film
-		err := rows.Scan(&film.ID, &film.Title, &film.Director)
+		err := rows.Scan(&film.ID, &film.Title, &film.Director, &film.Year, &film.User)
 		if err != nil {
 			http.Error(w, "Failed to scan film", http.StatusInternalServerError)
 		}
@@ -29,15 +31,22 @@ func home(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, films)
 }
 
-func new(w http.ResponseWriter, r *http.Request) {
+func New(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		title := r.FormValue("title")
 		director := r.FormValue("director")
-		if title == "" || director == "" {
+		year := r.FormValue("year")
+		fmt.Print(year)
+		if title == "" || director == "" || year == "" {
 			http.Error(w, "Title and Director cannot be empty", http.StatusBadRequest)
 			return
 		}
-		entry, err := db.Exec("INSERT INTO FILMS (Title, Director) VALUES (?, ?)", title, director)
+		yearInt, err := strconv.Atoi(year)
+		if err != nil {
+			http.Error(w, "Invalid year format", http.StatusBadRequest)
+			return
+		}
+		entry, err := models.DB.Exec("INSERT INTO FILMS (Title, Director, Year) VALUES (?, ?, ?)", title, director, yearInt)
 		if err != nil {
 			http.Error(w, "Failed to add film", http.StatusInternalServerError)
 			return
@@ -50,17 +59,19 @@ func new(w http.ResponseWriter, r *http.Request) {
 		tmpl.ExecuteTemplate(w, "filmCard", models.Film{
 			Title:    title,
 			Director: director,
-			ID:       id})
+			ID:       id,
+			Year:     &yearInt,
+		})
 
 	} else {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func delete(w http.ResponseWriter, r *http.Request) {
+func Delete(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodDelete {
 		id, _ := strconv.Atoi(r.PathValue("ID"))
-		_, err := db.Exec("DELETE FROM films WHERE ID = ?", id)
+		_, err := models.DB.Exec("DELETE FROM films WHERE ID = ?", id)
 		if err != nil {
 			http.Error(w, "Failed to delete film", http.StatusInternalServerError)
 		}
@@ -70,7 +81,7 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func updateTemplate(w http.ResponseWriter, r *http.Request) {
+func UpdateTemplate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		id, err := strconv.Atoi(r.PathValue("ID"))
 		if err != nil {
@@ -79,7 +90,7 @@ func updateTemplate(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var film models.Film
-		err = db.QueryRow("SELECT ID, Title, Director FROM films WHERE ID = ?", id).Scan(&film.ID, &film.Title, &film.Director)
+		err = models.DB.QueryRow("SELECT ID, Title, Director, Year, User FROM films WHERE ID = ?", id).Scan(&film.ID, &film.Title, &film.Director, &film.Year, &film.User)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
@@ -96,15 +107,21 @@ func updateTemplate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func update(w http.ResponseWriter, r *http.Request) {
+func Update(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPut {
 		id, _ := strconv.Atoi(r.PathValue("ID"))
 		title := r.FormValue("title")
 		director := r.FormValue("director")
-		if title == "" || director == "" {
+		year := r.FormValue("year")
+		if title == "" || director == "" || year == "" {
 			http.Error(w, "Title and Director cannot be empty", http.StatusBadRequest)
 		}
-		_, err := db.Exec(("UPDATE films SET Title = ?, Director = ? WHERE ID = ?"), title, director, id)
+		yearInt, err := strconv.Atoi(year)
+		if err != nil {
+			http.Error(w, "Invalid year format", http.StatusBadRequest)
+			return
+		}
+		_, err = models.DB.Exec(("UPDATE films SET Title = ?, Director = ?, Year = ? WHERE ID = ?"), title, director, yearInt, id)
 		if err != nil {
 			http.Error(w, "Failed to update film", http.StatusInternalServerError)
 		}
@@ -112,6 +129,7 @@ func update(w http.ResponseWriter, r *http.Request) {
 		tmpl.ExecuteTemplate(w, "filmCard", models.Film{
 			Title:    title,
 			Director: director,
+			Year:     &yearInt,
 			ID:       int64(id),
 		})
 	} else {
