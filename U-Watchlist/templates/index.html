@@ -163,17 +163,18 @@
 
     <form hx-indicator="#spinner" hx-post="/new" hx-trigger="submit" hx-target="#film-list" hx-swap="beforeend" class="container mt-5">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" class="form-control bg-dark border-secondary"  id="title" name="title" required>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="director" class="form-label">Director</label>
                 <input type="text" class="form-control bg-dark border-secondary" id="director" name="director" required>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="year" class="form-label">Year</label>
-                <input type="number" class="form-control bg-dark border-secondary" id="year" name="year" required>
+                <input max="2026" type="number" class="form-control bg-dark border-secondary" id="year" name="year" min="1" required>
+
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3">

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/alexquar/U-Watchlist/handlers"
+	"github.com/alexquar/U-Watchlist/middleware"
 	"github.com/alexquar/U-Watchlist/models"
 	"log"
 	_ "modernc.org/sqlite"
@@ -28,6 +29,7 @@ func main() {
 	mux.HandleFunc("GET /update/{ID}", handlers.UpdateTemplate)
 	mux.HandleFunc("PUT /update/{ID}", handlers.Update)
 	mux.HandleFunc("/", handlers.Home)
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	wrapped := middleware.UUIDCookieMiddleware(mux)
+	log.Fatal(http.ListenAndServe(":8080", wrapped))
 
 }
