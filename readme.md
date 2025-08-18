@@ -9,6 +9,12 @@ U-Watchlist is a custom web server project built with Go. It provides a platform
 - Simple web UI for adding, viewing, and removing items
 - Persistent storage using local files or a database
 
+## Tech Stack
+
+- Go
+- HTMX
+- SQLServer
+
 ## Getting Started
 
 ### Prerequisites
